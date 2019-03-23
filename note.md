@@ -22,6 +22,7 @@
     
 ### 1.4 忽略大小写反向排序
 注意： Collections.reverse仅**反转**，不是**降序** 
+
     String[] s = new String[]{"Z","a","A","z"};
     Arrays.sort(s,String.CASE_INSENSITIVE_ORDER);
     Collections.reverse(Arrays.asList(s));
