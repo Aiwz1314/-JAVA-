@@ -21,6 +21,7 @@
     输出结果：a,A,Z,z,
     
 ### 1.4 忽略大小写反向排序
+注意： Collections.reverse仅**反转**，不是**降序** 
     String[] s = new String[]{"Z","a","A","z"};
     Arrays.sort(s,String.CASE_INSENSITIVE_ORDER);
     Collections.reverse(Arrays.asList(s));
@@ -51,17 +52,17 @@
     }
     class Dog //定义一个“狗类”
     {
-    private String name;
-    private int weight;
-    public Dog(String name, int weight)
-    {
-    this.setName(name);
-    this.weight = weight;
-    }
-    public int getWeight()
-    {
-    return weight;
-    }
+        private String name;
+        private int weight;
+        public Dog(String name, int weight)
+        {
+            this.setName(name);
+            this.weight = weight;
+        }
+        public int getWeight()
+        {
+            return weight;
+        }
     public void setWeight(int weight)
     {this.weight = weight;}
     public void setName(Stringname)
