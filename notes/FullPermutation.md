@@ -52,7 +52,7 @@
 第三次，"a"与"c"互相调换，递归调用arrange[str, str + 1, len]就是在求取{"b", "a"}的排列。
 
 --------------------- 
-作者：randyjiawenjie 
-来源：CSDN 
-原文：https://blog.csdn.net/randyjiawenjie/article/details/6313729 
-版权声明：本文为博主原创文章，转载请附上博文链接！
+作者：randyjiawenjie  
+来源：CSDN   
+原文：https://blog.csdn.net/randyjiawenjie/article/details/6313729   
+版权声明：本文为博主原创文章，转载请附上博文链接！  
