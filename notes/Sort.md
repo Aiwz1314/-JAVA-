@@ -6,6 +6,15 @@
           System.out.print(num[i]+”,”); 
     输出结果：-8,2,2,3,3,4,5,5,
     
+    Comparator<Integer> cmp = new Comparator<Integer>() {
+		public int compare(Integer i1, Integer i2) {
+			return i2-i1;
+		}
+	};
+	Arrays.sort(arr, cmp);
+    输出结果：5,5,4,3,3,2,2,-8,
+
+    
 ### 1.2 字符串排序（先大写后小写原则）
     Sring[] s = new String[]{"Z", "a", "A", "z"};
     Array.sort(s);
