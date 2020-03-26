@@ -286,36 +286,64 @@ public class Main7 {
 
 ```
 
-## 8、结果填空（签到题）
-问题描述  
-在1至2019中，有多少个数的数位中包含数字9？  
-注意，有的数中的数位中包含多个9，这个数只算一次。例如，1999这个数包含数字9，在计算只是算一个数。  
-答案提交  
-这是一道结果填空的题，你只需要算出结果后提交即可。本题的结果为一个整数，在提交答案时只填写这个整数，填写多余的内容将无法得分。   
+## 8、序列计数（DFS）
+```
+【问题描述】  
+小明想知道，满足以下条件的正整数序列的数量：  
+1. 第一项为 n；  
+2. 第二项不超过 n；  
+3. 从第三项开始，每一项小于前两项的差的绝对值。  
+请计算，对于给定的 n，有多少种满足条件的序列。
+【输入格式】
+输入一行包含一个整数 n。
+【输出格式】
+输出一个整数，表示答案。答案可能很大，请输出答案除以10000的余数。
+【样例输入】
+4
+【样例输出】
+7
+【样例说明】
+以下是满足条件的序列：
+4 1
+4 1 1
+4 1 2
+4 2
+4 2 1
+4 3
+4 4
+【评测用例规模与约定】
+对于 20% 的评测用例，1 <= n <= 5；
+对于 50% 的评测用例，1 <= n <= 10；
+对于 80% 的评测用例，1 <= n <= 100；
+对于所有评测用例，1 <= n <= 1000。
+```
    
-答案：544  
 题解：
 ```java
-public class Main4 {
-    private static boolean contain9(int num) {
-        while (num != 0) {
-            if (num % 10 == 9) {
-                return true;
-            } else {
-                num /= 10;
-            }
+import java.util.Scanner;
+
+public class Main8 {
+
+    public static int tmp = 0;
+
+    public static void dfs(int differ, int node) { //node为当前节点 differ为node节点与父节点的差值
+        if (node == 0 || differ == 0 || differ == 1) {
+            tmp++;
+            return;
         }
-        return false;
+        for (int i = 0; i < differ; i++) {
+            dfs(Math.abs(node - i), i);
+        }
     }
 
     public static void main(String[] args) {
-        int count = 0;
-        for (int i = 1; i <= 2019; i++) {
-            if (contain9(i)) {
-                count++;
-            }
+        //输入
+        Scanner in = new Scanner(System.in);
+        int n = in.nextInt();
+        for (int i = 1; i <= n; i++) {
+            dfs(n - i, i);
         }
-        System.out.println(count);
+        System.out.println(tmp % 10000);
     }
 }
 ```
