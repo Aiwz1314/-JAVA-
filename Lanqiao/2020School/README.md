@@ -321,36 +321,102 @@ public class Main4 {
 ```
 
 
-## 9、结果填空（签到题）
-问题描述  
-在1至2019中，有多少个数的数位中包含数字9？  
-注意，有的数中的数位中包含多个9，这个数只算一次。例如，1999这个数包含数字9，在计算只是算一个数。  
-答案提交  
-这是一道结果填空的题，你只需要算出结果后提交即可。本题的结果为一个整数，在提交答案时只填写这个整数，填写多余的内容将无法得分。   
+## 9、长草（BFS）
+> 【问题描述】  
+小明有一块空地，他将这块空地划分为 n 行 m 列的小块，每行和每列的长度都为1。  
+小明选了其中的一些小块空地，种上了草，其他小块仍然保持是空地。这些草长得很快，每个月，草都会向外长出一些，如果一个小块种了草，则它将向自己的上、下、左、右四小块空地扩展，这四小块空地都将变为有草的小块。
+请告诉小明，k 个月后空地上哪些地方有草。  
+【输入格式】  
+输入的第一行包含两个整数 n, m。  
+接下来 n 行，每行包含 m 个字母，表示初始的空地状态，字母之间没有空格。如果为小数点，表示为空地，如果字母为 g，表示种了草。  
+接下来包含一个整数 k。  
+【输出格式】  
+输出 n 行，每行包含 m 个字母，表示 k 个月后空地的状态。如果为小数点，表示为空地，如果字母为 g，表示长了草。  
+【样例输入】  
+4 5  
+.g...  
+.....  
+..g..  
+.....  
+2  
+【样例输出】  
+gggg.  
+gggg.  
+ggggg  
+.ggg.  
+【评测用例规模与约定】  
+对于 30% 的评测用例，2 <= n, m <= 20。  
+对于 70% 的评测用例，2 <= n, m <= 100。  
+对于所有评测用例，2 <= n, m <= 1000，1 <= k <= 1000。  
    
-答案：544  
-题解：
+题解：O(N*M)  
 ```java
-public class Main4 {
-    private static boolean contain9(int num) {
-        while (num != 0) {
-            if (num % 10 == 9) {
-                return true;
-            } else {
-                num /= 10;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.LinkedList;
+import java.util.Scanner;
+
+public class Main9 {
+
+    public static void main(String[] args) throws IOException {
+        Scanner in = new Scanner(System.in);
+        int intN = in.nextInt();
+        int intM = in.nextInt();
+        boolean[][] di = new boolean[intN][intM];
+        LinkedList<Block> mylist = new LinkedList<>();
+
+        for (int i = 0; i < intN; i++) {
+            char[] tmep = in.next().toCharArray();
+            for (int j = 0; j < intM; j++) {
+                if (tmep[j] == '.') di[i][j] = false;
+                else {
+                    di[i][j] = true;
+                    mylist.add(new Block(i, j, 0));
+                }
             }
         }
-        return false;
+        int k = in.nextInt();
+        long now = System.currentTimeMillis();
+
+        int[] dx = new int[]{1, 0, -1, 0};
+        int[] dy = new int[]{0, 1, 0, -1};
+        while (!mylist.isEmpty()) {
+            Block block = mylist.removeFirst();
+            if (block.k < k) {
+                for (int i = 0; i <= 3; i++) {
+                    int nx = block.i + dx[i];
+                    int ny = block.j + dy[i];
+                    if (0 <= nx && nx < intN && 0 <= ny && ny < intM && !di[nx][ny]) {
+                        di[nx][ny] = true;
+                        mylist.addLast(new Block(nx, ny, block.k + 1));
+                    }
+                }
+            }
+        }
+
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
+        for (int i = 0; i < intN; i++) {
+            for (int j = 0; j < intM; j++) {
+                if (di[i][j]) writer.write('g');
+                else writer.write('.');
+            }
+            writer.write('\n');
+        }
+        writer.flush();
+        System.err.println(System.currentTimeMillis()-now);
     }
 
-    public static void main(String[] args) {
-        int count = 0;
-        for (int i = 1; i <= 2019; i++) {
-            if (contain9(i)) {
-                count++;
-            }
+    private static class Block {
+        int i;
+        int j;
+        int k;
+
+        public Block(int i, int j, int k) {
+            this.i = i;
+            this.j = j;
+            this.k = k;
         }
-        System.out.println(count);
     }
 }
 ```
