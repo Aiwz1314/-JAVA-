@@ -36,12 +36,15 @@ public class Main2 {
 
 ## 3、结果填空（签到题）
 问题描述  
-一棵包含有2019个结点的树，最多包含多少个叶结点？  
+一棵包含有2019个结点的二叉树，最多包含多少个叶结点？  
 答案提交  
 这是一道结果填空的题，你只需要算出结果后提交即可。本题的结果为一个整数，在提交答案时只填写这个整数，填写多余的内容将无法得分。  
   
-答案：2018  
-题解：2018叉树，去掉1个根节点，全是叶节点
+答案：1010  
+题解：  
+n=n0+n1+n2，为使叶子节点数（n0）最多，必须n1最小，设为0，而n0=n2+1  
+得n2=(n-1)/2 = (2019-1)/2 = 1009  
+所以n0=1010
 
 
 ## 4、结果填空（签到题）
@@ -235,38 +238,56 @@ public class Main6 {
 }
 ```
 
-## 7、结果填空（签到题）
-问题描述  
-在1至2019中，有多少个数的数位中包含数字9？  
-注意，有的数中的数位中包含多个9，这个数只算一次。例如，1999这个数包含数字9，在计算只是算一个数。  
-答案提交  
-这是一道结果填空的题，你只需要算出结果后提交即可。本题的结果为一个整数，在提交答案时只填写这个整数，填写多余的内容将无法得分。   
-   
-答案：544  
-题解：
+## 7、数位递增（dp）
+```
+问题描述
+一个正整数如果任何一个数位不大于右边相邻的数位，则称为一个数位递增的数，例如1135是一个数位递增的数，而1024不是一个数位递增的数。
+给定正整数 n，请问在整数 1 至 n 中有多少个数位递增的数？
+输入格式
+输入的第一行包含一个整数 n。
+输出格式
+输出一行包含一个整数，表示答案。
+样例输入
+30
+样例输出
+26
+评测用例规模与约定
+对于 40% 的评测用例，1 <= n <= 1000。
+对于 80% 的评测用例，1 <= n <= 100000。
+对于所有评测用例，1 <= n <= 1000000。
+```
+
+题解：  
+迭代字符串的每一位，判断是否满足要求
 ```java
-public class Main4 {
-    private static boolean contain9(int num) {
-        while (num != 0) {
-            if (num % 10 == 9) {
-                return true;
-            } else {
-                num /= 10;
-            }
-        }
-        return false;
-    }
+import java.util.Scanner;
+
+public class Main7 {
 
     public static void main(String[] args) {
-        int count = 0;
-        for (int i = 1; i <= 2019; i++) {
-            if (contain9(i)) {
-                count++;
+        Scanner in = new Scanner(System.in);
+
+        while (true) {
+            int n = in.nextInt();
+            int ans = 0;
+            for (int i = 1; i <= n; ++i) {
+                String s = "" + i;
+                boolean flag = true;
+                for (int j = 1; j < s.length(); ++j) {
+                    if (s.charAt(j - 1) > s.charAt(j)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag)
+                    ans++;
             }
+            System.out.println(ans);
         }
-        System.out.println(count);
+
     }
 }
+
 ```
 
 ## 8、结果填空（签到题）
