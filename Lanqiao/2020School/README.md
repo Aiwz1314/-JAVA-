@@ -286,7 +286,7 @@ public class Main7 {
 
 ```
 
-## 8、序列计数（DFS）
+## 8、序列计数（DFS）【没做出来】
 ```
 【问题描述】  
 小明想知道，满足以下条件的正整数序列的数量：  
@@ -318,7 +318,9 @@ public class Main7 {
 对于所有评测用例，1 <= n <= 1000。
 ```
    
-题解：
+题解：  
+画画树就会很明了  
+注意递归的终止条件：当前节点为0 或 当前加点与父节点差值为0 或 当前节点与父节点差值为1
 ```java
 import java.util.Scanner;
 
@@ -346,6 +348,110 @@ public class Main8 {
         System.out.println(tmp % 10000);
     }
 }
+```
+但是时间超了
+
+看一下标准答案
+```java
+思路：记忆型递归 O(N^3)
+题干第三点，是一个递归定义，可以得到递归式：
+
+1. f(pre,cur) = f(cur,1) + f(cur,2) + ... +f(cur,abs(pre-cur)-1) + 1
+2. pre表示前一个数，cur代表当前的数，选定之后，序列种数等于以cur为前序，以1到abs-1为当前的序列数的总和再加1.
+3. 如f(5,2) = f(2,1)+f(2,2).
+
+但是暴力递归的复杂度是指数级，输入1000时，实测运行时间为1000~2000ms；
+
+基本的优化方案是加状态记忆：
+
+参考代码：记忆型递归
+import java.util.Scanner;
+
+public class _09_01 {
+    static final int MOD = 10000;
+    static int N;
+    static long ans;
+    static long[][] mem = new long[1001][1000];
+    static Scanner sc;
+
+    static long dfs(int pre, int cur) {
+        // 询问状态
+        if (mem[pre][cur] != 0)
+            return mem[pre][cur];
+        long ans = 1;
+        for (int j = 1; j < Math.abs(pre - cur); j++) {
+            ans = (ans + dfs(cur, j)) % MOD;
+        }
+        mem[pre][cur] = ans;
+        return ans;
+    }
+
+    static void work() {
+        ans = 0;
+        N = sc.nextInt();
+		long ago = System.currentTimeMillis();
+        //    f(pre,cur) = sum(f(cur,_new))|_new from 1 to abs(pre-cur)-1
+        for (int x = 1; x <= N; ++x) ans = (ans + dfs(N, x)) % MOD;
+        System.out.println(ans);
+		System.err.println(System.currentTimeMillis() - ago);
+    }
+
+    public static void main(String[] args) {
+        sc = new Scanner(System.in);
+        while (true) {
+            work();  
+        }
+    }
+}	
+
+进一步优化
+至此，能通过80%的数据（在1000ms限制下）；
+
+解空间是N的平方（详细为N*N）表格，但是每次都要循环加总，所以成了N的立方，在同样的解空间下，避免循环加总，即可优化到N的平方
+
+重新考虑状态的转移：
+
+如果我们用f(i,j)表示前一个数是i，当前数是1到j的合法序列的个数；有f(i,j) = 1 + f(i,j-1) + f(j,abs(i-j)-1)即分为两个部分1）i作为前一个数，从1j-1为当前数的合法序列的个数已经计算好，2）求以j为尾数，后面选择1abs(i-j)-1的合法序列的个数。
+
+如 f(10,5)=f(10,4)+f(5,4);而不是枚举1到5；这样每次解答树只展开两个节点，相当于减少一层循环，虽然解答树的层次还是很深，但是由于记忆的存在，解空间仍然是N的平方。可在100ms内解决。
+
+参考代码：
+import java.util.Scanner;
+
+public class _09_02 {
+    static final int MOD = 10000;
+    static int N;
+    static long ans;
+    static long[][] mem = new long[1001][1000];
+    static Scanner sc;
+
+    static long dfs(int pre, int cur) {
+        if (cur <= 0) return 0;
+        // 询问状态
+        if (mem[pre][cur] != 0)
+            return mem[pre][cur];
+        mem[pre][cur] = (1 + dfs(pre, cur - 1) + dfs(cur, Math.abs(pre - cur) - 1)) % MOD;
+        return mem[pre][cur];
+    }
+
+    static void work() {
+        ans = 0;
+        N = sc.nextInt();
+        long ago = System.currentTimeMillis();
+        System.out.println(dfs(N, N));
+        System.err.println(System.currentTimeMillis() - ago);
+    }
+
+    public static void main(String[] args) {
+        sc = new Scanner(System.in);
+        while (true) {
+            work();
+        }
+    }
+}
+————————————————
+版权声明：本文为CSDN博主「小9」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/zhengwei223/article/details/105065566
 ```
 
 
@@ -449,37 +555,179 @@ public class Main9 {
 }
 ```
 
-## 10、结果填空（签到题）
-问题描述  
-在1至2019中，有多少个数的数位中包含数字9？  
-注意，有的数中的数位中包含多个9，这个数只算一次。例如，1999这个数包含数字9，在计算只是算一个数。  
-答案提交  
-这是一道结果填空的题，你只需要算出结果后提交即可。本题的结果为一个整数，在提交答案时只填写这个整数，填写多余的内容将无法得分。   
-   
-答案：544  
+## 10、晚会节目单（）
+```
+【问题描述】
+小明要组织一台晚会，总共准备了 n 个节目。然后晚会的时间有限，他只能最终选择其中的 m 个节目。
+这 n 个节目是按照小明设想的顺序给定的，顺序不能改变。
+小明发现，观众对于晚会的喜欢程度与前几个节目的好看程度有非常大的关系，他希望选出的第一个节目尽可能好看，在此前提下希望第二个节目尽可能好看，依次类推。
+小明给每个节目定义了一个好看值，请你帮助小明选择出 m 个节目，满足他的要求。
+【输入格式】
+输入的第一行包含两个整数 n, m ，表示节目的数量和要选择的数量。
+第二行包含 n 个整数，依次为每个节目的好看值。
+【输出格式】
+输出一行包含 m 个整数，为选出的节目的好看值。
+【样例输入】
+5 3
+3 1 2 5 4
+【样例输出】
+3 5 4
+【样例说明】
+选择了第1, 4, 5个节目。
+【评测用例规模与约定】
+对于 30% 的评测用例，1 <= n <= 20；
+对于 60% 的评测用例，1 <= n <= 100；
+对于所有评测用例，1 <= n <= 100000，0 <= 节目的好看值 <= 100000。
+```
+
 题解：
 ```java
-public class Main4 {
-    private static boolean contain9(int num) {
-        while (num != 0) {
-            if (num % 10 == 9) {
-                return true;
-            } else {
-                num /= 10;
-            }
-        }
-        return false;
-    }
+错误思路
+如果用两次排序求解，那就错了。因为并不是要选出的方案的好看值总和最大，而是要从前往后尽量好看。
 
-    public static void main(String[] args) {
-        int count = 0;
-        for (int i = 1; i <= 2019; i++) {
-            if (contain9(i)) {
-                count++;
-            }
+思路 O(N^2)
+此题关键在于“第一个节目尽可能好看”并希望“第二个节目尽可能好看”……那么我们选择的第一节目就是max(g[0]~g[n-m])闭区间，要选择的第二个节目是max(g[lastMax+1],g[n-m+1])及从上一个节目往下到n-m+1这个区间里面选最好看的，直到剩下的必须全部选择。
+
+算法用尺取法，双指针移动。理论上的复杂度是O(M*(N-M))，极端情况是M=N/2，整体达到(N^2)/2。如果输入数据为：
+
+100000 50000
+100000 99999 ...
+实测运行时间为：10秒以上
+
+参考代码
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Scanner;
+
+public class _10_1 {
+    public static Scanner sc = new Scanner(System.in);
+    public static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static int N, M;
+
+    public static void main(String[] args) throws IOException {
+        N = sc.nextInt();
+        M = sc.nextInt();
+        int[] games = new int[N];
+        for (int i = 0; i < N; i++) {
+            games[i] = sc.nextInt();
         }
-        System.out.println(count);
+        int pos_max = 0, pos_1 = 0, pos_2 = N - M;
+        while (pos_1 < pos_2 && pos_2 < N) {
+            while (pos_1 < pos_2)
+                if (games[++pos_1] > games[pos_max]) pos_max = pos_1;
+            bw.write(games[pos_max] + " ");
+            pos_1 = pos_max + 1;
+            pos_2++;
+            pos_max = pos_1;
+        }
+        while (pos_2 != N) {
+            bw.write(games[pos_2++] + " ");
+        }
+        bw.write('\n');
+        bw.flush();
     }
 }
+
+
+优化：区间最值查询 O(NlogN)
+while (pos_1 < pos_2)
+	if (games[++pos_1] > games[pos_max])pos_max = pos_1;
+
+这一段代码是区间内查询最大值，反复多次，且数据是静态的，所以选择ST做RMQ。
+
+f[i][j]表示以 i 为起点，连续 2^j 个数中的最大值（的下标）；
+
+转移方程就是：f[i][j] = data[f[i][j-1]] >= data[f[i+pow_2(j-1)][j-1]]?f[i][j-1]:f[i+pow_2(j-1)][j-1]; 注：比较原始数据，记录下标
+
+由于预处理是O(nlogn)，M次查询是O(M)，每次查询是O(1)，所以整体复杂度为O(nlogn)。
+
+下列代码实测运行时间100ms以内
+
+参考代码
+import java.io.*;
+import java.util.Scanner;
+
+public class _10_2 {
+    public static Scanner sc;
+    public static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static int N, M;
+    private static int[] data;
+
+    /*===st rmq begin===*/
+    private static int[][] st;
+    private static int[] Log;
+
+    private static int pow_2(int x) {
+        return 1 << x;
+    }
+
+    private static void initLog() {
+        Log = new int[N + 1];
+        Log[1] = 0;
+        for (int i = 2; i <= N; i++) {
+            Log[i] = Log[i / 2] + 1;
+        }
+    }
+
+    private static void initSt() {
+        st = new int[N][Log[N]+1];
+        for (int i = 0; i < N; i++) {
+            st[i][0] = i;//注意此处记录索引
+        }
+        for (int j = 1; pow_2(j) < N; j++) {
+            for (int i = 0; i + pow_2(j - 1) < N; i++) {
+                int index1 = st[i][j - 1];
+                int index2 = st[i + pow_2(j - 1)][j - 1];
+                st[i][j] = data[index1] > data[index2] ? index1 : index2;
+            }
+        }
+    }
+
+    private static int query(int l, int r) {
+        int len = r - l + 1;
+        int k = Log[len];
+
+        int index1 = st[l][k];
+        int index2 = st[r - pow_2(k) + 1][k];
+
+        return data[index1] > data[index2] ? index1 : index2;
+    }
+    /*===st rmq end===*/
+
+    public static void main(String[] args) throws IOException {
+        long ago = System.currentTimeMillis();
+        System.setIn(new FileInputStream(new File("E:\\data\\my10_1.in")));
+        sc = new Scanner(System.in);
+        N = sc.nextInt();
+        M = sc.nextInt();
+        data = new int[N];
+        for (int i = 0; i < N; i++) {
+            data[i] = sc.nextInt();
+        }
+//        初始化st数据
+        initLog();
+        initSt();
+        int pos_max = 0, pos_1 = 0, pos_2 = N - M;
+        while (pos_1 < pos_2 && pos_2 < N) {
+//            while (pos_1 < pos_2)
+//                if (data[++pos_1] > data[pos_max]) pos_max = pos_1;
+            pos_max = query(pos_1, pos_2);
+            bw.write(data[pos_max] + " ");
+            pos_1 = pos_max + 1;
+            pos_2++;
+//            pos_max = pos_1;
+        }
+        while (pos_2 != N) {
+            bw.write(data[pos_2++] + " ");
+        }
+        bw.write('\n');
+        bw.flush();
+        System.err.println(System.currentTimeMillis() - ago);
+    }
+}
+————————————————
+版权声明：本文为CSDN博主「小9」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/zhengwei223/article/details/105065566
 ```
 
